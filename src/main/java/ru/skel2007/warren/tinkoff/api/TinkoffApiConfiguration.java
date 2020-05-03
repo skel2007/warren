@@ -9,7 +9,7 @@ import ru.tinkoff.invest.openapi.OpenApi;
 @Configuration
 public class TinkoffApiConfiguration {
 
-    @Bean(destroyMethod = "close")
+    @Bean
     public OpenApi tinkoffApi(@NotNull TinkoffProperties properties) {
         return TinkoffApiHelper.create(properties.getApi());
     }
