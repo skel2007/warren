@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.skel2007.warren.tinkoff.api.TinkoffApiService;
+import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.models.user.AccountsList;
 import ru.tinkoff.invest.openapi.models.user.BrokerAccount;
 
@@ -19,17 +19,17 @@ import ru.tinkoff.invest.openapi.models.user.BrokerAccount;
 public class AccountsController {
 
     @NotNull
-    private final TinkoffApiService tinkoffApiService;
+    private final OpenApi tinkoffApi;
 
     @Autowired
-    public AccountsController(@NotNull TinkoffApiService tinkoffApiService) {
-        this.tinkoffApiService = tinkoffApiService;
+    public AccountsController(@NotNull OpenApi tinkoffApi) {
+        this.tinkoffApi = tinkoffApi;
     }
 
     @GetMapping
     @NotNull
     public Flux<BrokerAccount> getAccounts() {
-        CompletableFuture<AccountsList> accounts = tinkoffApiService
+        CompletableFuture<AccountsList> accounts = tinkoffApi
                 .getUserContext()
                 .getAccounts();
 

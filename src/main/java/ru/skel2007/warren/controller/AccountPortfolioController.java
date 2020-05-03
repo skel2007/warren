@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.skel2007.warren.tinkoff.api.TinkoffApiService;
+import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
@@ -20,11 +20,11 @@ import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 public class AccountPortfolioController {
 
     @NotNull
-    private final TinkoffApiService tinkoffApiService;
+    private final OpenApi tinkoffApi;
 
     @Autowired
-    public AccountPortfolioController(@NotNull TinkoffApiService tinkoffApiService) {
-        this.tinkoffApiService = tinkoffApiService;
+    public AccountPortfolioController(@NotNull OpenApi tinkoffApi) {
+        this.tinkoffApi = tinkoffApi;
     }
 
     @GetMapping("positions")
@@ -32,7 +32,7 @@ public class AccountPortfolioController {
     public Flux<Portfolio.PortfolioPosition> getPortfolioPositions(
             @PathVariable("broker_account_id") @NotNull String brokerAccountId
     ) {
-        CompletableFuture<Portfolio> portfolio = tinkoffApiService
+        CompletableFuture<Portfolio> portfolio = tinkoffApi
                 .getPortfolioContext()
                 .getPortfolio(brokerAccountId);
 
@@ -46,7 +46,7 @@ public class AccountPortfolioController {
     public Flux<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies(
             @PathVariable("broker_account_id") @NotNull String brokerAccountId
     ) {
-        CompletableFuture<PortfolioCurrencies> currencies = tinkoffApiService
+        CompletableFuture<PortfolioCurrencies> currencies = tinkoffApi
                 .getPortfolioContext()
                 .getPortfolioCurrencies(brokerAccountId);
 

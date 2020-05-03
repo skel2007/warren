@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.skel2007.warren.tinkoff.api.TinkoffApiService;
+import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.models.market.Candle;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
@@ -28,11 +28,11 @@ import ru.tinkoff.invest.openapi.models.market.Orderbook;
 public class MarketController {
 
     @NotNull
-    private final TinkoffApiService tinkoffApiService;
+    private final OpenApi tinkoffApi;
 
     @Autowired
-    public MarketController(@NotNull TinkoffApiService tinkoffApiService) {
-        this.tinkoffApiService = tinkoffApiService;
+    public MarketController(@NotNull OpenApi tinkoffApi) {
+        this.tinkoffApi = tinkoffApi;
     }
 
     @GetMapping("{figi}/candles")
@@ -44,7 +44,7 @@ public class MarketController {
         var to = OffsetDateTime.now();
         var from = to.minus(Duration.ofHours(1));
 
-        CompletableFuture<Optional<HistoricalCandles>> candles = tinkoffApiService
+        CompletableFuture<Optional<HistoricalCandles>> candles = tinkoffApi
                 .getMarketContext()
                 .getMarketCandles(figi, from, to, interval);
 
@@ -60,7 +60,7 @@ public class MarketController {
     public Mono<Orderbook> getOrderbook(
             @PathVariable("figi") @NotNull String figi
     ) {
-        CompletableFuture<Optional<Orderbook>> orderbook = tinkoffApiService
+        CompletableFuture<Optional<Orderbook>> orderbook = tinkoffApi
                 .getMarketContext()
                 .getMarketOrderbook(figi, 1);
 
