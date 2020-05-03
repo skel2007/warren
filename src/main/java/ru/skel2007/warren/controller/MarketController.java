@@ -7,12 +7,14 @@ import java.util.concurrent.CompletableFuture;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.skel2007.warren.tinkoff.api.TinkoffApiService;
@@ -48,6 +50,7 @@ public class MarketController {
 
         return Mono.fromFuture(candles)
                 .flatMap(Mono::justOrEmpty)
+                .switchIfEmpty(Mono.error(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)))
                 .map(it -> it.candles)
                 .flatMapMany(Flux::fromIterable);
     }
@@ -62,7 +65,8 @@ public class MarketController {
                 .getMarketOrderbook(figi, 1);
 
         return Mono.fromFuture(orderbook)
-                .flatMap(Mono::justOrEmpty);
+                .flatMap(Mono::justOrEmpty)
+                .switchIfEmpty(Mono.error(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
 }
